@@ -1,0 +1,88 @@
+// Main dashboard component
+import React from 'react'
+import { View, ScrollView, RefreshControl } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
+import { useDashboardData } from './queries'
+import { useDashboardState } from './hooks'
+import {
+  HeaderSection,
+  CarCarousel,
+  AlertsSection,
+  QuickActionsGrid,
+  RecentActivity,
+} from './ui'
+import { styles } from './styles'
+import type { IAlert, IQuickAction } from './model'
+
+export function Dashboard() {
+  const { data, isLoading, refetch, isRefetching } = useDashboardData()
+  const { isAlertsExpanded, setRefreshing, toggleAlerts } = useDashboardState()
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await refetch()
+    setRefreshing(false)
+  }
+
+  const handleAlertPress = (alert: IAlert) => {
+    // TODO: Navigate to appropriate screen based on alert type
+    console.log('Alert pressed:', alert)
+  }
+
+  const handleActionPress = (action: IQuickAction) => {
+    // TODO: Navigate to appropriate screen based on action
+    console.log('Action pressed:', action)
+  }
+
+  if (isLoading || !data) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <HeaderSection user={{ name: 'Пользователь' }} />
+        </View>
+      </SafeAreaView>
+    )
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            tintColor="#007AFF"
+            onRefresh={handleRefresh}
+          />
+        }
+      >
+        {/* Header */}
+        <HeaderSection user={data.user} />
+
+        {/* Content */}
+        <View style={styles.content}>
+          {/* Car Carousel */}
+          <CarCarousel cars={data.cars} />
+
+          {/* Alerts Section */}
+          <AlertsSection
+            alerts={data.alerts}
+            isExpanded={isAlertsExpanded}
+            onAlertPress={handleAlertPress}
+            onToggleExpanded={toggleAlerts}
+          />
+
+          {/* Quick Actions Grid */}
+          <QuickActionsGrid
+            actions={data.quickActions}
+            onActionPress={handleActionPress}
+          />
+
+          {/* Recent Activity */}
+          <RecentActivity activities={data.recentActivity} />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  )
+}

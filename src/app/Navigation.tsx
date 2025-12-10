@@ -2,10 +2,10 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
-import { HomePage } from '../pages'
+import { Dashboard } from '../pages/dashboard'
 
 export type RootStackParamList = {
-  Home: undefined
+  Dashboard: undefined
   // Добавим позже другие экраны
 }
 
@@ -15,7 +15,7 @@ export function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Home"
+        initialRouteName="Dashboard"
         screenOptions={{
           headerStyle: {
             backgroundColor: '#007AFF',
@@ -27,8 +27,8 @@ export function Navigation() {
         }}
       >
         <Stack.Screen
-          component={HomePage}
-          name="Home"
+          component={Dashboard}
+          name="Dashboard"
           options={{
             title: 'Car Assistant',
           }}

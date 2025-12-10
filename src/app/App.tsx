@@ -1,18 +1,22 @@
 import React from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+import { Navigation } from './Navigation'
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
   },
 })
 
 export function App() {
   return (
-    <View style={styles.container}>
-      <Text>Hello World</Text>
-    </View>
+    <QueryClientProvider client={queryClient}>
+      <Navigation />
+    </QueryClientProvider>
   )
 }

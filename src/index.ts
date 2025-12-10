@@ -2,7 +2,7 @@
 export { App } from './app'
 
 // Pages layer
-export { HomePage } from './pages'
+export { Dashboard } from './pages/dashboard'
 
 // Shared layer
 export * from './shared'
