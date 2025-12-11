@@ -12,7 +12,9 @@ import {
   QuickActionsGrid,
   RecentActivity,
 } from './ui'
+import { BottomActionsBar } from '../../shared/ui'
 import { styles } from './styles'
+import { BOTTOM_ACTIONS } from './model/constants'
 import type { IAlert, IQuickAction } from './model'
 
 export function Dashboard() {
@@ -33,6 +35,16 @@ export function Dashboard() {
   const handleActionPress = (action: IQuickAction) => {
     // TODO: Navigate to appropriate screen based on action
     console.log('Action pressed:', action)
+  }
+
+  const handleBottomActionPress = (action: {
+    id: string
+    icon: string
+    label: string
+    route?: string
+  }) => {
+    // TODO: Navigate to appropriate screen based on bottom action
+    console.log('Bottom action pressed:', action)
   }
 
   if (isLoading || !data) {
@@ -83,6 +95,12 @@ export function Dashboard() {
           <RecentActivity activities={data.recentActivity} />
         </View>
       </ScrollView>
+
+      {/* Bottom Actions Bar */}
+      <BottomActionsBar
+        actions={BOTTOM_ACTIONS}
+        onActionPress={handleBottomActionPress}
+      />
     </SafeAreaView>
   )
 }

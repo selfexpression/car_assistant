@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 20,
+    paddingBottom: 100, // Space for bottom actions bar
   },
   content: {
     flex: 1,
