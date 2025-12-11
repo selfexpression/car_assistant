@@ -46,8 +46,20 @@ export const styles = StyleSheet.create({
   activeDot: {
     backgroundColor: '#007AFF',
   },
+  carouselContainer: {
+    height: 160,
+    overflow: 'hidden',
+  },
+  scrollContent: {
+    // Empty for proper paging
+  },
   carCard: {
-    marginHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  carCardContent: {
+    width: '100%',
+    paddingHorizontal: 20,
   },
   carName: {
     fontSize: 18,

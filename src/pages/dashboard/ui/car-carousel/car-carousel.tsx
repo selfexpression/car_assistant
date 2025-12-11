@@ -1,10 +1,15 @@
-import React from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import React, { useRef, useState } from 'react'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+} from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 
 import { styles } from './styles'
 import { Card, MetricCard } from '../../../../shared/ui'
-import { useCarCarousel } from '../../hooks'
 import { formatMileage } from '../../lib'
 import type { ICar } from '../../../../entities/car/model'
 import type { IMetricCard as MetricCardType } from '../../model'
@@ -13,11 +18,42 @@ interface ICarCarouselProps {
   cars: ICar[]
 }
 
-// Component implementation
+const { width: screenWidth } = Dimensions.get('window')
 
 export function CarCarousel({ cars }: ICarCarouselProps) {
-  const { activeIndex, activeCar, goToNext, goToPrevious, hasMultipleCars } =
-    useCarCarousel(cars)
+  const scrollViewRef = useRef<ScrollView>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  const activeCar = cars[activeIndex]
+  const hasMultipleCars = cars.length > 1
+
+  const handleScrollEnd = (event: {
+    nativeEvent: { contentOffset: { x: number } }
+  }) => {
+    const scrollPosition = event.nativeEvent.contentOffset.x
+    const newIndex = Math.round(scrollPosition / screenWidth)
+    if (newIndex !== activeIndex && newIndex >= 0 && newIndex < cars.length) {
+      setActiveIndex(newIndex)
+    }
+  }
+
+  const goToIndex = (index: number) => {
+    if (index >= 0 && index < cars.length) {
+      setActiveIndex(index)
+      scrollViewRef.current?.scrollTo({
+        x: index * screenWidth,
+        animated: true,
+      })
+    }
+  }
+
+  const goToNext = () => {
+    goToIndex(activeIndex + 1)
+  }
+
+  const goToPrevious = () => {
+    goToIndex(activeIndex - 1)
+  }
 
   if (!activeCar) {
     return (
@@ -26,31 +62,6 @@ export function CarCarousel({ cars }: ICarCarouselProps) {
       </Card>
     )
   }
-
-  const metrics: MetricCardType[] = [
-    {
-      id: 'today-mileage',
-      label: 'Сегодня',
-      value: '0',
-      unit: 'км',
-    },
-    {
-      id: 'total-mileage',
-      label: 'Пробег',
-      value: formatMileage(activeCar.mileage),
-    },
-    {
-      id: 'next-service',
-      label: 'ТО через',
-      value: activeCar.nextServiceDate
-        ? Math.ceil(
-            (activeCar.nextServiceDate.getTime() - Date.now()) /
-              (1000 * 60 * 60 * 24)
-          ).toString()
-        : '—',
-      unit: 'дн',
-    },
-  ]
 
   return (
     <View style={styles.container}>
@@ -92,23 +103,71 @@ export function CarCarousel({ cars }: ICarCarouselProps) {
         )}
       </View>
 
-      {/* Car Card */}
-      <Card style={styles.carCard}>
-        <Text style={styles.carName}>
-          {activeCar.brand} {activeCar.model} {activeCar.year}
-        </Text>
+      {/* Car Cards Carousel */}
+      <View style={styles.carouselContainer}>
+        <ScrollView
+          horizontal
+          pagingEnabled
+          contentContainerStyle={styles.scrollContent}
+          ref={scrollViewRef}
+          scrollEventThrottle={16}
+          showsHorizontalScrollIndicator={false}
+          onMomentumScrollEnd={handleScrollEnd}
+        >
+          {cars.map((car, index) => {
+            const carMetrics: MetricCardType[] = [
+              {
+                id: `today-mileage-${index}`,
+                label: 'Сегодня',
+                value: '0',
+                unit: 'км',
+              },
+              {
+                id: `total-mileage-${index}`,
+                label: 'Пробег',
+                value: formatMileage(car.mileage),
+              },
+              {
+                id: `next-service-${index}`,
+                label: 'ТО через',
+                value: car.nextServiceDate
+                  ? Math.ceil(
+                      (car.nextServiceDate.getTime() - Date.now()) /
+                        (1000 * 60 * 60 * 24)
+                    ).toString()
+                  : '—',
+                unit: 'дн',
+              },
+            ]
 
-        {/* Metrics Grid */}
-        <View style={styles.metricsGrid}>
-          {metrics.map(metric => (
-            <MetricCard
-              key={metric.id}
-              metric={metric}
-              style={styles.metricCard}
-            />
-          ))}
-        </View>
-      </Card>
+            return (
+              <View
+                key={car.id}
+                style={[styles.carCard, { width: screenWidth }]}
+              >
+                <View style={styles.carCardContent}>
+                  <Card>
+                    <Text style={styles.carName}>
+                      {car.brand} {car.model} {car.year}
+                    </Text>
+
+                    {/* Metrics Grid */}
+                    <View style={styles.metricsGrid}>
+                      {carMetrics.map(metric => (
+                        <MetricCard
+                          key={metric.id}
+                          metric={metric}
+                          style={styles.metricCard}
+                        />
+                      ))}
+                    </View>
+                  </Card>
+                </View>
+              </View>
+            )
+          })}
+        </ScrollView>
+      </View>
     </View>
   )
 }
