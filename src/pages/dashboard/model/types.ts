@@ -26,20 +26,11 @@ export interface IActivityItem {
   amount?: number
 }
 
-export interface IQuickAction {
-  id: string
-  title: string
-  icon: string
-  route: string
-  color: string
-}
-
 export interface IDashboardData {
   user: IUserInfo
   cars: ICar[]
   alerts: IAlert[]
   recentActivity: IActivityItem[]
-  quickActions: IQuickAction[]
 }
 
 export interface IMetricCard {

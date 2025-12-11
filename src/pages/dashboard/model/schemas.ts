@@ -52,15 +52,6 @@ export const activityItemSchema = z.object({
   amount: z.number().optional(),
 })
 
-// Quick action schema
-export const quickActionSchema = z.object({
-  id: z.string(),
-  title: z.string().min(1, 'Название обязательно'),
-  icon: z.string().min(1, 'Иконка обязательна'),
-  route: z.string().min(1, 'Роут обязателен'),
-  color: z.string().regex(/^#[0-9A-F]{6}$/i, 'Неверный формат цвета'),
-})
-
 // Metric card schema
 export const metricCardSchema = z.object({
   id: z.string(),
@@ -76,5 +67,4 @@ export const dashboardDataSchema = z.object({
   cars: z.array(carSchema),
   alerts: z.array(alertSchema),
   recentActivity: z.array(activityItemSchema),
-  quickActions: z.array(quickActionSchema),
 })

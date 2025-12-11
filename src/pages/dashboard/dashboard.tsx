@@ -5,17 +5,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { useDashboardData } from './queries'
 import { useDashboardState } from './hooks'
-import {
-  HeaderSection,
-  CarCarousel,
-  AlertsSection,
-  QuickActionsGrid,
-  RecentActivity,
-} from './ui'
+import { HeaderSection, CarCarousel, AlertsSection, RecentActivity } from './ui'
 import { BottomActionsBar } from '../../shared/ui'
 import { styles } from './styles'
 import { BOTTOM_ACTIONS } from './model/constants'
-import type { IAlert, IQuickAction } from './model'
+import type { IAlert } from './model'
 
 export function Dashboard() {
   const { data, isLoading, refetch, isRefetching } = useDashboardData()
@@ -30,11 +24,6 @@ export function Dashboard() {
   const handleAlertPress = (alert: IAlert) => {
     // TODO: Navigate to appropriate screen based on alert type
     console.log('Alert pressed:', alert)
-  }
-
-  const handleActionPress = (action: IQuickAction) => {
-    // TODO: Navigate to appropriate screen based on action
-    console.log('Action pressed:', action)
   }
 
   const handleBottomActionPress = (action: {
@@ -83,12 +72,6 @@ export function Dashboard() {
             isExpanded={isAlertsExpanded}
             onAlertPress={handleAlertPress}
             onToggleExpanded={toggleAlerts}
-          />
-
-          {/* Quick Actions Grid */}
-          <QuickActionsGrid
-            actions={data.quickActions}
-            onActionPress={handleActionPress}
           />
 
           {/* Recent Activity */}
